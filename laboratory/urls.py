@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import LoginView, LogoutView
-from laboratory.views import EmployeeListView, EmployeeDetailView, EmployeeCreateView, EmployeeUpdateView, EmployeeDeleteView
+from laboratory.views import EmployeeListView, EmployeeDetailView, EmployeeCreateView, EmployeeUpdateView, EmployeeDeleteView, register
 
 urlpatterns = [
     path('', EmployeeListView.as_view(), name='employee_list'),
@@ -11,6 +11,7 @@ urlpatterns = [
     path('employee/<int:pk>/delete/', EmployeeDeleteView.as_view(), name='employee_delete'),
     path('login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='employee_list'), name='logout'),
+    path('register/', register, name='register'),
 ]
 
 from django.conf import settings

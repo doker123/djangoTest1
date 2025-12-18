@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center mb-0">Регистрация нового пользователя</h3>
+                </div>
+                <div class="card-body">
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <p class="mb-1">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Основная информация -->
+                        <div class="mb-3 text-center">
+                            <div class="mb-3">
+                                <div class="avatar-preview mx-auto" style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; background-color: #e9ecef; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-person-circle fs-1 text-secondary"></i>
+                                    <img id="avatar-preview" src="#" alt="Предпросмотр аватара" class="d-none" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <input type="file" name="avatar" id="id_avatar" class="form-control mt-2" accept="image/*">
+                                {% if form.avatar.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.avatar.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Загрузите ваше фото (необязательно)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.username.id_for_label }}" class="form-label">Логин <span class="text-danger">*</span></label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.username.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Минимум 4 символа, буквы и цифры</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Электронная почта <span class="text-danger">*</span></label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя <span class="text-danger">*</span></label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.first_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия <span class="text-danger">*</span></label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.last_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.password1.id_for_label }}" class="form-label">Пароль <span class="text-danger">*</span></label>
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.password1.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.password2.id_for_label }}" class="form-label">Подтверждение пароля <span class="text-danger">*</span></label>
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.password2.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Дополнительная информация -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Кем вы являетесь в системе?</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="user_type" id="id_user_type_hr" value="hr" checked>
+                                    <label class="form-check-label" for="id_user_type_hr">
+                                        Сотрудник отдела кадров
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="user_type" id="id_user_type_trade_union" value="trade_union">
+                                    <label class="form-check-label" for="id_user_type_trade_union">
+                                        Сотрудник профкома
+                                    </label>
+                                </div>
+                                <div class="form-text">Выберите роль для определения прав доступа в системе</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-person-plus me-2"></i>Зарегистрироваться
+                            </button>
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary text-center">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Уже есть аккаунт? Войти в систему
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Добавление классов Bootstrap к полям формы
+        const inputs = document.querySelectorAll('input:not([type="radio"]):not([type="file"])');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+            if (input.type === 'password') {
+                input.setAttribute('autocomplete', 'new-password');
+            }
+        });
+        
+        // Предпросмотр аватара
+        const avatarInput = document.getElementById('id_avatar');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const avatarPreviewContainer = document.querySelector('.avatar-preview');
+        
+        if (avatarInput && avatarPreview) {
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        avatarPreview.src = event.target.result;
+                        avatarPreview.classList.remove('d-none');
+                        avatarPreviewContainer.querySelector('.bi-person-circle').classList.add('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    avatarPreview.classList.add('d-none');
+                    avatarPreviewContainer.querySelector('.bi-person-circle').classList.remove('d-none');
+                }
+            });
+        }
+        
+        // Показать/скрыть пароль
+        const passwordFields = document.querySelectorAll('input[type="password"]');
+        passwordFields.forEach(field => {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.type = 'button';
+            toggleBtn.className = 'btn btn-sm btn-outline-secondary position-absolute end-0 top-50 translate-middle-y me-2';
+            toggleBtn.innerHTML = '<i class="bi bi-eye"></i>';
+            toggleBtn.style.zIndex = '10';
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'position-relative';
+            field.parentNode.insertBefore(wrapper, field);
+            wrapper.appendChild(field);
+            wrapper.appendChild(toggleBtn);
+            
+            toggleBtn.addEventListener('click', function() {
+                const type = field.getAttribute('type') === 'password' ? 'text' : 'password';
+                field.setAttribute('type', type);
+                toggleBtn.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+            });
+        });
+        
+        // Валидация пароля на клиенте
+        const password1 = document.getElementById('id_password1');
+        const password2 = document.getElementById('id_password2');
+        
+        if (password1 && password2) {
+            password2.addEventListener('input', function() {
+                if (password1.value && password2.value && password1.value !== password2.value) {
+                    password2.classList.add('is-invalid');
+                } else {
+                    password2.classList.remove('is-invalid');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

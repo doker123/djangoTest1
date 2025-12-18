@@ -52,3 +52,39 @@ class EmployeeDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
     template_name = 'laboratory/employee_confirm_delete.html'
     success_url = reverse_lazy('employee_list')
     permission_required = 'laboratory.delete_employee'
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.contrib.auth.models import Group
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+
+
+            user_type = request.POST.get('user_type', 'user')
+
+
+            if user_type == 'hr':
+                group = Group.objects.get(name='Отдел кадров')
+                user.groups.add(group)
+            elif user_type == 'trade_union':
+                group = Group.objects.get(name='Профком')
+                user.groups.add(group)
+
+
+            login(request, user)
+            messages.success(request, 'Регистрация успешно завершена!')
+            return redirect('employee_list')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'registration/register.html', {
+        'form': form
+    })
