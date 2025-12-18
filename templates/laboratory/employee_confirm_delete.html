@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="text-center mb-0">Подтверждение удаления</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-exclamation-triangle fs-1 text-warning"></i>
+                    </div>
+                    
+                    <div class="alert alert-danger">
+                        <h5 class="mb-3">Вы уверены, что хотите удалить сотрудника?</h5>
+                        <p class="mb-0">
+                            <strong>ФИО:</strong> {{ employee.full_name }}<br>
+                            <strong>Должность:</strong> {{ employee.position }}<br>
+                            <strong>Ученая степень:</strong> 
+                            {% if employee.academic_degree %}
+                                {{ employee.academic_degree }}
+                            {% else %}
+                                Не указана
+                            {% endif %}
+                        </p>
+                        <p class="mt-3 mb-0 text-muted">
+                            <i class="bi bi-info-circle me-1"></i> Это действие нельзя отменить. Все связанные данные будут удалены безвозвратно.
+                        </p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i>Удалить сотрудника
+                            </button>
+                            <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Отменить
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Предупреждение о последствиях -->
+            <div class="mt-4 p-3 bg-light rounded">
+                <h6 class="text-muted mb-2">Важная информация:</h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-1"><i class="bi bi-check-circle text-success me-2"></i> Сотрудник будет немедленно удален из базы данных</li>
+                    <li class="mb-1"><i class="bi bi-check-circle text-success me-2"></i> Эта операция не может быть отменена</li>
+                    <li class="mb-1"><i class="bi bi-check-circle text-success me-2"></i> История внесения изменений будет сохранена в системном журнале</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

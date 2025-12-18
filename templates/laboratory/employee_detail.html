@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Карточка сотрудника</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Вернуться к списку
+            </a>
+            {% if perms.laboratory.change_employee %}
+                <a href="{% url 'employee_update' employee.pk %}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Редактировать
+                </a>
+            {% endif %}
+            {% if perms.laboratory.delete_employee %}
+                <a href="{% url 'employee_delete' employee.pk %}" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Удалить
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">{{ employee.full_name }}</h3>
+        </div>
+        
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h5 class="text-muted mb-3">Основная информация</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Должность:</span>
+                            <span class="text-end">{{ employee.position }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Ученая степень:</span>
+                            <span class="text-end">
+                                {% if employee.academic_degree %}
+                                    {{ employee.academic_degree }}
+                                {% else %}
+                                    <span class="text-muted">Не указана</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Дата добавления:</span>
+                            <span class="text-end">{{ employee.date_added|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        {% if employee.added_by %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Добавлен сотрудником:</span>
+                                <span class="text-end">{{ employee.added_by.username }}</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <h5 class="text-muted mb-3">Личные данные</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Пол:</span>
+                            <span class="text-end">
+                                {% if employee.gender == 'M' %}Мужской{% else %}Женский{% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Возраст:</span>
+                            <span class="text-end">{{ employee.age }} лет</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Семейное положение:</span>
+                            <span class="text-end">
+                                {% if employee.marital_status == 'S' %}Холост/Не замужем
+                                {% elif employee.marital_status == 'M' %}Женат/Замужем
+                                {% elif employee.marital_status == 'D' %}Разведен(а)
+                                {% elif employee.marital_status == 'W' %}Вдовец/Вдова
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Наличие детей:</span>
+                            <span class="text-end">
+                                {% if employee.has_children %}Есть{% else %}Нет{% endif %}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between">
+                <span class="text-muted">
+                    <i class="bi bi-clock"></i> Последнее обновление: {{ employee.date_added|date:"d.m.Y H:i" }}
+                </span>
+                {% if perms.laboratory.add_employee %}
+                <div>
+                    <a href="{% url 'employee_create' %}" class="btn btn-sm btn-success">
+                        <i class="bi bi-plus-circle"></i> Добавить нового сотрудника
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Секция для отчетов (доступна профкому) -->
+    {% if perms.laboratory.view_employee %}
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Отчеты</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-bar-chart fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">Отчет по возрасту</h5>
+                            <p class="card-text text-muted">Статистика по возрастным группам</p>
+                            <a href="#" class="btn btn-outline-primary">Сформировать</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-people fs-1 text-success mb-3"></i>
+                            <h5 class="card-title">Семейный статус</h5>
+                            <p class="card-text text-muted">Анализ семейного положения</p>
+                            <a href="#" class="btn btn-outline-success">Сформировать</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-mortarboard fs-1 text-info mb-3"></i>
+                            <h5 class="card-title">Ученые степени</h5>
+                            <p class="card-text text-muted">Распределение по квалификации</p>
+                            <a href="#" class="btn btn-outline-info">Сформировать</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

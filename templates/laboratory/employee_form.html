@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                {% if object %}
+                    Редактирование сотрудника: {{ object.full_name }}
+                {% else %}
+                    Добавление нового сотрудника
+                {% endif %}
+            </h3>
+        </div>
+        
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Основная информация -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Основная информация</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="{{ form.full_name.id_for_label }}" class="form-label fw-bold">ФИО <span class="text-danger">*</span></label>
+                                {{ form.full_name }}
+                                {% if form.full_name.errors %}
+                                    <div class="text-danger mt-1">
+                                        {% for error in form.full_name.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Укажите полное имя, фамилию и отчество сотрудника</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.position.id_for_label }}" class="form-label fw-bold">Должность <span class="text-danger">*</span></label>
+                                {{ form.position }}
+                                {% if form.position.errors %}
+                                    <div class="text-danger mt-1">
+                                        {% for error in form.position.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.academic_degree.id_for_label }}" class="form-label fw-bold">Ученая степень</label>
+                                {{ form.academic_degree }}
+                                {% if form.academic_degree.errors %}
+                                    <div class="text-danger mt-1">
+                                        {% for error in form.academic_degree.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Например: кандидат наук, доктор наук</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Личные данные -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Личные данные</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.gender.id_for_label }}" class="form-label fw-bold">Пол <span class="text-danger">*</span></label>
+                                {{ form.gender }}
+                                {% if form.gender.errors %}
+                                    <div class="text-danger mt-1">
+                                        {% for error in form.gender.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label for="{{ form.age.id_for_label }}" class="form-label fw-bold">Возраст <span class="text-danger">*</span></label>
+                                {{ form.age }}
+                                {% if form.age.errors %}
+                                    <div class="text-danger mt-1">
+                                        {% for error in form.age.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label for="{{ form.marital_status.id_for_label }}" class="form-label fw-bold">Семейное положение <span class="text-danger">*</span></label>
+                                {{ form.marital_status }}
+                                {% if form.marital_status.errors %}
+                                    <div class="text-danger mt-1">
+                                        {% for error in form.marital_status.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-check form-switch">
+                                    {{ form.has_children }}
+                                    <label for="{{ form.has_children.id_for_label }}" class="form-check-label fw-bold">Наличие детей</label>
+                                    {% if form.has_children.errors %}
+                                        <div class="text-danger mt-1">
+                                            {% for error in form.has_children.errors %}
+                                                <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Системная информация (только для редактирования) -->
+                {% if object %}
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Системная информация</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Дата добавления</label>
+                                <input type="text" class="form-control" value="{{ object.date_added|date:'d.m.Y H:i' }}" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Добавлен пользователем</label>
+                                <input type="text" class="form-control" value="{{ object.added_by.username }}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Кнопки действий -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'employee_list' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Отмена
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> 
+                        {% if object %}
+                            Сохранить изменения
+                        {% else %}
+                            Добавить сотрудника
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
